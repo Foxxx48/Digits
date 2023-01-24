@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Digits</string>
+    <string name="get_fact">Get Fact</string>
+    <string name="get_random_fact">get random fact</string>
+    <string name="input_a_digit">Input a digit</string>
+    <string name="something_went_wrong">something went wrong</string>
 </resources>
