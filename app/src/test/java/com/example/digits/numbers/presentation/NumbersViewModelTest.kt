@@ -33,7 +33,7 @@ class NumbersViewModelTest {
         assertEquals(1, communications.timeShowList)
 
         // get some data
-        interactor.changeExpectedResult(NumbersResult.Failure())
+        interactor.changeExpectedResult(NumbersResult.Failure("no internet connection"))
         viewModel.fetchRandomNumberData()
 
         assertEquals(3, communications.progressCalledList.size)
@@ -45,7 +45,7 @@ class NumbersViewModelTest {
         assertEquals(false, communications.progressCalledList[3])
 
         assertEquals(2, communications.stateCalledList.size)
-        assertEquals(UiState.Error(/* todo message */), communications.stateCalledList[1])
+        assertEquals(UiState.Error("no internet connection"), communications.stateCalledList[1])
 
         assertEquals(1, communications.timeShowList)
 
@@ -157,7 +157,7 @@ class NumbersViewModelTest {
             return result
         }
 
-        override suspend fun factAboutRandomNumber(number: String): NumberResult {
+        override suspend fun factAboutRandomNumber(): NumberResult {
             fetchAboutRandomNumberCalledList.add(result)
             return result
         }
