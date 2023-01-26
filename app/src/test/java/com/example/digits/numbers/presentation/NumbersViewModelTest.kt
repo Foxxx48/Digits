@@ -139,9 +139,9 @@ class NumbersViewModelTest {
 
         private var result: NumbersResult = NumbersResult.Success()
 
-        val initCalledList = mutableListOf<NumberResult>()
-        val fetchAboutNumberCalledList = mutableListOf<NumberResult>()
-        val fetchAboutRandomNumberCalledList = mutableListOf<NumberResult>()
+        val initCalledList = mutableListOf<NumbersResult>()
+        val fetchAboutNumberCalledList = mutableListOf<NumbersResult>()
+        val fetchAboutRandomNumberCalledList = mutableListOf<NumbersResult>()
 
         fun changeExpectedResult(newResult: NumbersResult) {
             result = newResult
@@ -152,12 +152,12 @@ class NumbersViewModelTest {
             return result
         }
 
-        override suspend fun factAboutNumber(number: String): NumberResult {
+        override suspend fun factAboutNumber(number: String): NumbersResult {
             fetchAboutNumberCalledList.add(result)
             return result
         }
 
-        override suspend fun factAboutRandomNumber(): NumberResult {
+        override suspend fun factAboutRandomNumber(): NumbersResult {
             fetchAboutRandomNumberCalledList.add(result)
             return result
         }
