@@ -1,5 +1,8 @@
 package com.example.digits.numbers.presentation
 
+import com.example.digits.numbers.domain.NumberFact
+import com.example.digits.numbers.domain.NumbersInteractor
+import com.example.digits.numbers.domain.NumbersResult
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -27,7 +30,7 @@ class NumbersViewModelTest {
         assertEquals(false, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
-        assertEquals(UiState.Success(), communications.stateCalledList[0])
+        assertEquals(UiState.Success(emptyList<NumberUi>()), communications.stateCalledList[0])
 
         assertEquals(0, communications.numbersList.size)
         assertEquals(1, communications.timeShowList)
@@ -115,7 +118,7 @@ class NumbersViewModelTest {
     private class TestNumbersCommunications : NumbersCommunications {
 
         val progressCalledList = mutableListOf<Boolean>()
-        val stateCalledList = mutableListOf<Boolean>()
+        val stateCalledList = mutableListOf<UiState>()
         var timeShowList = 0
         val numbersList = mutableListOf<NumberUi>()
 
