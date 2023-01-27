@@ -3,20 +3,20 @@ package com.example.digits.numbers.presentation
 sealed class UiState {
 
     interface Mapper<T> {
-        fun map(list: List<NumberUi>, message: String): T
+        fun map(message: String): T
     }
 
     abstract fun <T> map(mapper: Mapper<T>): T
 
-    class Success(private val list: List<NumberUi> = emptyList()) : UiState() {
+    class Success() : UiState() {
         override fun <T> map(mapper: Mapper<T>): T {
-            return mapper.map(list, "")
+            return mapper.map("")
         }
     }
 
     class Error(private val message: String) : UiState() {
         override fun <T> map(mapper: Mapper<T>): T {
-            return mapper.map(emptyList(), message)
+            return mapper.map(message)
         }
     }
 }
