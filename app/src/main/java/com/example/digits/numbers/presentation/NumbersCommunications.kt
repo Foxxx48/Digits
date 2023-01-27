@@ -32,7 +32,6 @@ interface NumbersCommunications : ObserveNumbers {
         override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>) {
             numbersList.observe(owner, observer)
         }
-
     }
 }
 

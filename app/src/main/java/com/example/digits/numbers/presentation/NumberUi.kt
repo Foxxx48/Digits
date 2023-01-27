@@ -6,9 +6,12 @@ import androidx.core.text.isDigitsOnly
 data class NumberUi(
     private val id: String,
     private val fact: String
-) {
-    fun map(head: TextView, subTitle: TextView) {
-        head.text = id
-        subTitle.text = fact
+) : Mapper<Boolean, NumberUi>{
+    fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
+
+    interface Mapper<T> {
+        fun map(id: String, fact: String): T
     }
+
+    override fun map(source: NumberUi): Boolean  = source.id == id
 }
