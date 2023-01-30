@@ -29,11 +29,11 @@ class NumbersViewModel (
     override fun init(isFirstRun: Boolean) {
         if(isFirstRun) {
             communications.showProgress(true)
-            viewModelScope.launch {
-                val result = interactor.init()
-                communications.showProgress(false)
-                result.map(numbersResultMapper)
-            }
+//            viewModelScope.launch {
+//                val result = interactor.init()
+//                communications.showProgress(false)
+//                result.map(numbersResultMapper)
+//            }
         }
     }
 
