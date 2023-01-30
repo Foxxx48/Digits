@@ -39,7 +39,8 @@ class NumbersResultMapperTest : BaseTest() {
         mapper.map(list)
         assertEquals(1, communications.timeShowList)
         assertEquals(true, communications.stateCalledList[0] is UiState.Success)
-        assertEquals(true, list[0] == NumberFact("44", "Fact"))
+//        assertEquals(true, list[0] == NumberFact("44", "Fact"))
+        assertEquals(NumberUi("44", "Fact"), communications.numbersList[0] )
 
     }
 }

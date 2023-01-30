@@ -2,14 +2,18 @@ package com.example.digits.numbers.presentation
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.digits.R
 import com.example.digits.numbers.domain.NumbersInteractor
+import kotlinx.coroutines.launch
 
 class NumbersViewModel (
+    private val manageResources: ManageResources,
     private val communications: NumbersCommunications,
     private val interactor: NumbersInteractor,
     private val numbersResultMapper: NumbersResultMapper
-) : FetchNumbers, ObserveNumbers {
+) : ViewModel(), FetchNumbers, ObserveNumbers {
     override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) {
         communications.observeProgress(owner, observer)
     }
@@ -23,17 +27,28 @@ class NumbersViewModel (
     }
 
     override fun fetchNumberFact(number: String) {
-        TODO("Not yet implemented")
+        if (number.isEmpty()) {
+            communications.showState(UiState.Error(manageResources.string(R.string.empty_number_error_message)))
+        } else {
+            communications.showProgress(true)
+            viewModelScope.launch {
+                val result = interactor.init()
+                communications.showState(UiState.Success())
+                communications.showProgress(false)
+                result.map(numbersResultMapper)
+            }
+
+        }
     }
 
     override fun init(isFirstRun: Boolean) {
         if(isFirstRun) {
             communications.showProgress(true)
-//            viewModelScope.launch {
-//                val result = interactor.init()
-//                communications.showProgress(false)
-//                result.map(numbersResultMapper)
-//            }
+            viewModelScope.launch {
+                val result = interactor.init()
+                communications.showProgress(false)
+                result.map(numbersResultMapper)
+            }
         }
     }
 

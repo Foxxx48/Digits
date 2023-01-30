@@ -4,10 +4,29 @@ import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
 import com.example.digits.numbers.domain.NumbersResult
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 
-class NumbersViewModelTest : BaseTest(){
+class NumbersViewModelTest : BaseTest() {
+
+    private lateinit var communications: TestNumbersCommunications
+    private lateinit var interactor: TestNumbersInteractor
+    private lateinit var testManageResources: TestManagerResources
+    private lateinit var viewModel: NumbersViewModel
+    @Before
+    fun init() {
+        communications = TestNumbersCommunications()
+        interactor = TestNumbersInteractor()
+        testManageResources = TestManagerResources()
+        viewModel = NumbersViewModel(
+            testManageResources,
+            communications,
+            interactor,
+            NumbersResultMapper(communications, NumberUiMapper())
+        )
+    }
 
     /**
      * Initial test
@@ -16,11 +35,8 @@ class NumbersViewModelTest : BaseTest(){
      * then re-unit and wait for the result
      */
     @Test
-    fun `test init and re-init`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
+    fun `test init and re-init`() = runBlocking {
+
         interactor.changeExpectedResult(NumbersResult.Success())
 
         viewModel.init(isFirstRun = true)
@@ -64,17 +80,14 @@ class NumbersViewModelTest : BaseTest(){
      * try to get information about empty number
      */
     @Test
-    fun `fact about empty number`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
-
+    fun `fact about empty number`() = runBlocking {
+        testManageResources.makeExpectedAnswer("entered number is empty")
         viewModel.fetchNumberFact("")
 
         assertEquals(0, interactor.fetchAboutNumberCalledList.size)
 
         assertEquals(0, communications.progressCalledList.size)
+
 
         assertEquals(UiState.Error("entered number is empty"), communications.stateCalledList[0])
 
@@ -86,11 +99,7 @@ class NumbersViewModelTest : BaseTest(){
      * try to get information about empty number
      */
     @Test
-    fun `fact about some number`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
+    fun `fact about some number`() = runBlocking {
 
         interactor.changeExpectedResult(
             NumbersResult.Success(listOf(NumberFact("45", "fact about 45")))
@@ -115,7 +124,17 @@ class NumbersViewModelTest : BaseTest(){
 
         assertEquals(1, communications.timeShowList)
         assertEquals(NumberUi("45", "fact about 45"), communications.numbersList[0])
+    }
 
+    private class TestManagerResources : ManageResources {
+        var string: String = ""
+
+        fun makeExpectedAnswer(expected: String) {
+            string = expected
+        }
+        override fun string(id: Int): String {
+            return string
+        }
 
     }
 
