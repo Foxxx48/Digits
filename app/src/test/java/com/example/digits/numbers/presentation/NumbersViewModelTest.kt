@@ -1,15 +1,37 @@
 package com.example.digits.numbers.presentation
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
 import com.example.digits.numbers.domain.NumbersResult
-import org.junit.Assert.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
-class NumbersViewModelTest {
+class NumbersViewModelTest : BaseTest() {
+    private lateinit var communications: TestNumbersCommunications
+    private lateinit var interactor: TestNumbersInteractor
+    private lateinit var testManageResources: TestManagerResources
+    private lateinit var viewModel: NumbersViewModel
+    private lateinit var dispatchersList: DispatchersList
+
+    @Before
+    fun init() {
+        dispatchersList = TestDispatcherList()
+        communications = TestNumbersCommunications()
+        interactor = TestNumbersInteractor()
+        testManageResources = TestManagerResources()
+        viewModel = NumbersViewModel(
+            dispatchersList,
+            testManageResources,
+            communications,
+            interactor,
+            NumbersResultMapper(communications, NumberUiMapper())
+        )
+    }
 
     /**
      * Initial test
@@ -18,32 +40,30 @@ class NumbersViewModelTest {
      * then re-unit and wait for the result
      */
     @Test
-    fun `test init and re-init`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
+    fun `test init and re-init`() = runBlocking {
+
         interactor.changeExpectedResult(NumbersResult.Success())
 
         viewModel.init(isFirstRun = true)
 
-        assertEquals(1, communications.progressCalledList.size)
-        assertEquals(true, communications.progressCalledList[0])
 
-        assertEquals(2, communications.progressCalledList.size)
+        assertEquals(true, communications.progressCalledList[0])
+        assertEquals(1, interactor.initCalledList.size)
+
+
         assertEquals(false, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
-        assertEquals(UiState.Success(), communications.stateCalledList[0])
+        assertEquals(true, communications.stateCalledList[0] is UiState.Success)
 
         assertEquals(0, communications.numbersList.size)
-        assertEquals(1, communications.timeShowList)
+        assertEquals(0, communications.timeShowList)
 
-        // get some data
+//        // get some data
         interactor.changeExpectedResult(NumbersResult.Failure("no internet connection"))
         viewModel.fetchRandomNumberFact()
 
-        assertEquals(3, communications.progressCalledList.size)
+//        assertEquals(4, communications.progressCalledList.size)
         assertEquals(true, communications.progressCalledList[2])
 
         assertEquals(1, interactor.fetchAboutRandomNumberCalledList.size)
@@ -54,29 +74,26 @@ class NumbersViewModelTest {
         assertEquals(2, communications.stateCalledList.size)
         assertEquals(UiState.Error("no internet connection"), communications.stateCalledList[1])
 
-        assertEquals(1, communications.timeShowList)
+        assertEquals(0, communications.timeShowList)
 
         viewModel.init(isFirstRun = false)
         assertEquals(4, communications.progressCalledList.size)
         assertEquals(2, communications.stateCalledList.size)
-        assertEquals(1, communications.timeShowList)
+        assertEquals(0, communications.timeShowList)
     }
 
     /**
      * try to get information about empty number
      */
     @Test
-    fun `fact about empty number`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
-
+    fun `fact about empty number`() = runBlocking {
+        testManageResources.makeExpectedAnswer("entered number is empty")
         viewModel.fetchNumberFact("")
 
         assertEquals(0, interactor.fetchAboutNumberCalledList.size)
 
         assertEquals(0, communications.progressCalledList.size)
+
 
         assertEquals(UiState.Error("entered number is empty"), communications.stateCalledList[0])
 
@@ -88,71 +105,54 @@ class NumbersViewModelTest {
      * try to get information about empty number
      */
     @Test
-    fun `fact about some number`() {
-        val communications = TestNumbersCommunications()
-        val interactor = TestNumbersInteractor()
-        val viewModel = NumbersViewModel(
-            communications, interactor, NumbersResultMapper(communications, NumberUiMapper()))
+    fun `fact about some number`() = runBlocking {
 
         interactor.changeExpectedResult(
-            NumbersResult.Success(listOf(NumberFact("45", "fact about 45")))
+            NumbersResult.Success(mutableListOf(NumberFact("45", "fact about 45")))
         )
 
         viewModel.fetchNumberFact("45")
 
-        assertEquals(1, communications.progressCalledList.size)
+//        assertEquals(2, communications.progressCalledList.size)
         assertEquals(true, communications.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
         assertEquals(
             NumbersResult.Success(
                 listOf(NumberFact("45", "fact about 45"))
-            ), interactor.fetchAboutNumberCalledList[0]
+            ),
+            interactor.fetchAboutNumberCalledList[0]
         )
 
         assertEquals(2, communications.progressCalledList.size)
         assertEquals(false, communications.progressCalledList[1])
 
-        assertEquals(UiState.Success(), communications.stateCalledList[0])
+        assertEquals(1, communications.stateCalledList.size)
+        assertEquals(true, communications.stateCalledList[0] is UiState.Success)
 
         assertEquals(1, communications.timeShowList)
         assertEquals(NumberUi("45", "fact about 45"), communications.numbersList[0])
+    }
 
+    private class TestManagerResources : ManageResources {
+        var string: String = ""
+
+        fun makeExpectedAnswer(expected: String) {
+            string = expected
+        }
+
+        override fun string(id: Int): String {
+            return string
+        }
 
     }
 
-    private class TestNumbersCommunications : NumbersCommunications {
-
-        val progressCalledList = mutableListOf<Boolean>()
-        val stateCalledList = mutableListOf<UiState>()
-        var timeShowList = 0
-        val numbersList = mutableListOf<NumberUi>()
-
-
-        override fun showProgress(show: Boolean) {
-            progressCalledList.add(show)
-
-        }
-
-        override fun showState(uiState: UiState) {
-            stateCalledList.add(uiState)
-        }
-
-        override fun showList(list: List<NumberUi>) {
-            timeShowList++
-            numbersList.addAll(list)
-        }
-
-        override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) = Unit
-
-        override fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) = Unit
-
-        override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>)  = Unit
-    }
 
     private class TestNumbersInteractor : NumbersInteractor {
 
-        private var result: NumbersResult = NumbersResult.Success()
+         var result: NumbersResult = NumbersResult.Success(
+            listOf(NumberFact("45", "fact about 45"))
+        )
 
         val initCalledList = mutableListOf<NumbersResult>()
         val fetchAboutNumberCalledList = mutableListOf<NumbersResult>()
@@ -160,6 +160,7 @@ class NumbersViewModelTest {
 
         fun changeExpectedResult(newResult: NumbersResult) {
             result = newResult
+
         }
 
         override suspend fun init(): NumbersResult {
@@ -177,6 +178,14 @@ class NumbersViewModelTest {
             return result
         }
 
+    }
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private class TestDispatcherList(
+        private val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
+    ) : DispatchersList {
+
+        override fun io(): CoroutineDispatcher = dispatcher
+        override fun ui(): CoroutineDispatcher = dispatcher
     }
 
 

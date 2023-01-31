@@ -2,7 +2,7 @@ package com.example.digits.numbers.domain
 
 interface NumbersInteractor {
 
-    suspend fun init(): NumbersResult
+    suspend fun init(): NumbersResult 
 
     suspend fun factAboutNumber(number: String): NumbersResult
 
