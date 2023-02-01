@@ -117,6 +117,7 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(true, communications.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
+
         assertEquals(
             NumbersResult.Success(
                 listOf(NumberFact("45", "fact about 45"))
@@ -150,9 +151,8 @@ class NumbersViewModelTest : BaseTest() {
 
     private class TestNumbersInteractor : NumbersInteractor {
 
-         var result: NumbersResult = NumbersResult.Success(
-            listOf(NumberFact("45", "fact about 45"))
-        )
+        private var result: NumbersResult = NumbersResult.Success()
+
 
         val initCalledList = mutableListOf<NumbersResult>()
         val fetchAboutNumberCalledList = mutableListOf<NumbersResult>()
@@ -168,6 +168,7 @@ class NumbersViewModelTest : BaseTest() {
             return result
         }
 
+
         override suspend fun factAboutNumber(number: String): NumbersResult {
             fetchAboutNumberCalledList.add(result)
             return result
@@ -179,6 +180,7 @@ class NumbersViewModelTest : BaseTest() {
         }
 
     }
+
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private class TestDispatcherList(
         private val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
