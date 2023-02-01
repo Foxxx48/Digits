@@ -8,13 +8,15 @@ sealed class UiState {
 
     abstract fun <T> map(mapper: Mapper<T>): T
 
-    class Success : UiState() {
+    class Success() : UiState() {
         override fun <T> map(mapper: Mapper<T>): T {
             return mapper.map("")
         }
     }
 
     data class Error(private val message: String) : UiState() {
+
+
         override fun <T> map(mapper: Mapper<T>): T {
             return mapper.map(message)
         }

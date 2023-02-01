@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 abstract class BaseTest {
 
     protected class TestNumbersCommunications : NumbersCommunications {
-
         val progressCalledList = mutableListOf<Boolean>()
         val stateCalledList = mutableListOf<UiState>()
         var timeShowList = 0

@@ -6,12 +6,13 @@ import com.example.digits.numbers.domain.NumbersInteractor
 import com.example.digits.numbers.domain.NumbersResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class NumbersViewModelTest : BaseTest() {
+
     private lateinit var communications: TestNumbersCommunications
     private lateinit var interactor: TestNumbersInteractor
     private lateinit var testManageResources: TestManagerResources
@@ -20,16 +21,23 @@ class NumbersViewModelTest : BaseTest() {
 
     @Before
     fun init() {
+
         dispatchersList = TestDispatcherList()
         communications = TestNumbersCommunications()
         interactor = TestNumbersInteractor()
         testManageResources = TestManagerResources()
-        viewModel = NumbersViewModel(
-            dispatchersList,
+
+        viewModel = NumbersViewModel.Base(
+            HandleNumbersRequest.Base(
+                dispatchersList,
+                communications,
+                NumbersResultMapper(
+                    communications, NumberUiMapper()
+                )
+            ),
             testManageResources,
             communications,
-            interactor,
-            NumbersResultMapper(communications, NumberUiMapper())
+            interactor
         )
     }
 
@@ -49,6 +57,7 @@ class NumbersViewModelTest : BaseTest() {
 
         assertEquals(true, communications.progressCalledList[0])
         assertEquals(1, interactor.initCalledList.size)
+
 
 
         assertEquals(false, communications.progressCalledList[1])
@@ -108,20 +117,18 @@ class NumbersViewModelTest : BaseTest() {
     fun `fact about some number`() = runBlocking {
 
         interactor.changeExpectedResult(
-            NumbersResult.Success(mutableListOf(NumberFact("45", "fact about 45")))
+            NumbersResult.Success(listOf(NumberFact("45", "fact about 45")))
         )
 
         viewModel.fetchNumberFact("45")
 
-//        assertEquals(2, communications.progressCalledList.size)
+
         assertEquals(true, communications.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
 
         assertEquals(
-            NumbersResult.Success(
-                listOf(NumberFact("45", "fact about 45"))
-            ),
+            NumbersResult.Success(listOf(NumberFact("45", "fact about 45"))),
             interactor.fetchAboutNumberCalledList[0]
         )
 
@@ -147,7 +154,6 @@ class NumbersViewModelTest : BaseTest() {
         }
 
     }
-
 
     private class TestNumbersInteractor : NumbersInteractor {
 
@@ -181,9 +187,8 @@ class NumbersViewModelTest : BaseTest() {
 
     }
 
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     private class TestDispatcherList(
-        private val dispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
+        private val dispatcher: CoroutineDispatcher = TestCoroutineDispatcher()
     ) : DispatchersList {
 
         override fun io(): CoroutineDispatcher = dispatcher
