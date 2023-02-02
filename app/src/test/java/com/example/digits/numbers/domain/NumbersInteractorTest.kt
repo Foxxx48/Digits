@@ -17,8 +17,8 @@ class NumbersInteractorTest {
         repository = TestNumbersRepository()
         interactor = NumbersInteractor.Base(
             repository,
-            HandleRequest.Base(HandleError.Base(manageResources), repository),
-            NumberFactDetails.Base()
+            HandleRequest.Base(HandleError.Base(manageResources), repository)
+
         )
     }
 
@@ -36,7 +36,7 @@ class NumbersInteractorTest {
 
     @Test
     fun test_fact_about_number_success(): Unit = runBlocking {
-        repository.changeExpectedList(listOf(NumberFact("77", "fact of number 77")))
+        repository.changeExpectedFactOfNumber(NumberFact("77", "fact about 77"))
 
         val actual = interactor.factAboutNumber("77")
 
