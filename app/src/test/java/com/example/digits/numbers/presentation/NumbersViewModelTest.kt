@@ -175,6 +175,7 @@ class NumbersViewModelTest : BaseTest() {
         }
 
 
+
         override suspend fun factAboutNumber(number: String): NumbersResult {
             fetchAboutNumberCalledList.add(result)
             return result
