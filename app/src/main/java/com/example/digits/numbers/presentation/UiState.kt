@@ -15,6 +15,8 @@ sealed class UiState {
     }
 
     data class Error(private val message: String) : UiState() {
+
+
         override fun <T> map(mapper: Mapper<T>): T {
             return mapper.map(message)
         }
