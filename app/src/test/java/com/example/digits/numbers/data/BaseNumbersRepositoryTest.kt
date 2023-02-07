@@ -2,6 +2,7 @@ package com.example.digits.numbers.data
 
 import com.example.digits.numbers.domain.NoInternetConnectionException
 import com.example.digits.numbers.domain.NumberFact
+import com.example.digits.numbers.domain.NumbersRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -9,14 +10,15 @@ import org.junit.Test
 import java.net.UnknownHostException
 
 class BaseNumbersRepositoryTest {
-    private lateinit var cacheDataSource: CacheNumbersDataSource
-    private lateinit var cloudDataSource: CloudDataSource
+
+    private lateinit var cacheDataSource: NumbersCacheDataSource
+    private lateinit var cloudDataSource: NumbersCloudDataSource
     private lateinit var repository: NumbersRepository
 
     @Before
     fun setup() {
-        cacheDataSource = TestCacheNumbersDataSource()
-        cloudDataSource = TestCloudDataSource()
+        cacheDataSource = TestNumbersCacheDataSource()
+        cloudDataSource = TestNumbersCloudDataSource()
         repository = BaseNumbersRepository(cloudDataSource, cacheDataSource)
     }
 
@@ -24,14 +26,14 @@ class BaseNumbersRepositoryTest {
     fun test_all_numbers() = runBlocking {
         cacheDataSource.replaceData(
             listOf(
-                NumberData("5, fact of 5"),
+                NumberData("5", "fact of 5"),
                 NumberData("6", "fact of 6")
             )
         )
 
         val actual = repository.allNumbers()
         val expected = listOf(
-            NumberFact("5"," fact of 5"),
+            NumberFact("5", " fact of 5"),
             NumberFact("6", "fact of 6")
         )
 
@@ -158,7 +160,7 @@ class BaseNumbersRepositoryTest {
         assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
     }
 
-    private class TestCacheNumbersDataSource : CacheNumbersDataSource {
+    private class TestNumbersCacheDataSource : NumbersCacheDataSource {
 
         var containsCalledList = mutableListOf<Boolean>()
 
@@ -172,23 +174,23 @@ class BaseNumbersRepositoryTest {
         private val data = mutableListOf<NumberData>()
 
 
-        override fun replaceData(newData: List<NumberData>) {
+        fun replaceData(newData: List<NumberData>) {
             data.clear()
             data.addAll(newData)
         }
 
-        override suspend fun allNumbers(): List<NumderData> {
+        override suspend fun allNumbers(): List<NumberData> {
             allNumbersCalledCount++
             return data
         }
 
-        override fun contains(number: String): Boolean {
+        override suspend fun contains(number: String): Boolean {
             val result = data.find { it.matches(number) } != null
             containsCalledList.add(result)
             return result
         }
 
-        override suspend fun numberfact(number: String): NumberData {
+        override suspend fun numberFact(number: String): NumberData {
             numbersFactCalledList.add(number)
             return data[0]
         }
@@ -200,10 +202,10 @@ class BaseNumbersRepositoryTest {
         }
     }
 
-    private class TestCloudDataSource : CloudDataSource {
+    private class TestNumbersCloudDataSource : NumbersCloudDataSource {
 
         private var isConnection = true
-        private var numberData = NuberData("", "")
+        private var numberData = NumberData("", "")
         private val numberFactCalledList = mutableListOf<String>()
         private val randomNumberFactCalledList = mutableListOf<String>()
         var numberFactCalledCount = 0
@@ -217,7 +219,7 @@ class BaseNumbersRepositoryTest {
             numberData = newNumberData
         }
 
-        override suspend fun numberfact(number: String): NumberData {
+        override suspend fun numberFact(number: String): NumberData {
             return if (isConnection) {
                 numberFactCalledCount++
                 numberFactCalledList.add(number)
@@ -227,7 +229,7 @@ class BaseNumbersRepositoryTest {
             }
         }
 
-        override suspend fun randomNumberfact(number: String): NumberData {
+        override suspend fun randomNumberFact(number: String): NumberData {
             return if (isConnection) {
                 randomNumberFactCalledCount++
                 randomNumberFactCalledList.add(number)
