@@ -1,12 +1,14 @@
 package com.example.digits.numbers.data
 
-interface NumbersCacheDataSource {
+interface NumbersCacheDataSource : FetchNumber {
 
     suspend fun allNumbers(): List<NumberData>
 
     suspend fun contains(number: String): Boolean
 
-    suspend fun numberFact(number: String): NumberData
-
     suspend fun saveNumberFact(numberData: NumberData)
+}
+
+interface FetchNumber {
+    suspend fun number(number: String): NumberData
 }

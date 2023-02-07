@@ -9,4 +9,8 @@ data class NumberData(
     }
 
     fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
+
+    fun matches(number: String) =
+        number == id
+
 }

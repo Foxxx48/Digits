@@ -1,5 +1,6 @@
 package com.example.digits.numbers.data
 
+import com.example.digits.numbers.domain.HandleError
 import com.example.digits.numbers.domain.NoInternetConnectionException
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumbersRepository
@@ -15,15 +16,24 @@ class BaseNumbersRepositoryTest {
     private lateinit var cloudDataSource: NumbersCloudDataSource
     private lateinit var repository: NumbersRepository
 
+    private lateinit var mapperToDomain: NumberData.Mapper<NumberFact>
+    private lateinit var handleError: HandleError<Exception>
+
     @Before
     fun setup() {
         cacheDataSource = TestNumbersCacheDataSource()
         cloudDataSource = TestNumbersCloudDataSource()
-        repository = BaseNumbersRepository(cloudDataSource, cacheDataSource)
+        repository = BaseNumbersRepository(
+            cloudDataSource,
+            cacheDataSource,
+            mapperToDomain,
+            handleError
+        )
     }
 
     @Test
     fun test_all_numbers() = runBlocking {
+
         cacheDataSource.replaceData(
             listOf(
                 NumberData("5", "fact of 5"),
@@ -66,6 +76,7 @@ class BaseNumbersRepositoryTest {
 
     @Test(expected = NoInternetConnectionException::class)
     fun test_number_fact_not_cached_no_connection() = runBlocking {
+
         cloudDataSource.changeConnection(false)
         cacheDataSource.replaseData(emptyList())
 
@@ -111,9 +122,6 @@ class BaseNumbersRepositoryTest {
 
         assertEquals(expected, actual)
 
-        assertEquals(false, cacheDataSource.containsCalledList[0])
-        assertEquals(1, cacheDataSource.containsCalledList.size)
-
         assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
         assertEquals(0, cloudDataSource.numberFactCalledCount)
 
@@ -128,9 +136,6 @@ class BaseNumbersRepositoryTest {
         cacheDataSource.replaseData(emptyList())
 
         repository.randomNumberFact()
-
-        assertEquals(false, cacheDataSource.containsCalledList[0])
-        assertEquals(1, cacheDataSource.containsCalledList.size)
 
         assertEquals(0, cloudDataSource.numberFactCalledCount)
         assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
@@ -152,9 +157,6 @@ class BaseNumbersRepositoryTest {
         assertEquals(expected, actual)
         assertEquals(1, cloudDataSource.randomNumberFactCalledCount)
 
-        assertEquals(true, cacheDataSource.containsCalledList[0])
-        assertEquals(1, cacheDataSource.containsCalledList.size)
-
         assertEquals(0, cacheDataSource.numbersFactCalledList.size)
 
         assertEquals(0, cacheDataSource.saveNumberFactCalledCount)
@@ -164,7 +166,7 @@ class BaseNumbersRepositoryTest {
 
         var containsCalledList = mutableListOf<Boolean>()
 
-        var numbersFactCalledList = mutableListOf<String>()
+        var numberCalledList = mutableListOf<String>()
 
         var allNumbersCalledCount = 0
 
@@ -190,8 +192,8 @@ class BaseNumbersRepositoryTest {
             return result
         }
 
-        override suspend fun numberFact(number: String): NumberData {
-            numbersFactCalledList.add(number)
+        override suspend fun number(number: String): NumberData {
+            numberCalledList.add(number)
             return data[0]
         }
 
@@ -206,10 +208,10 @@ class BaseNumbersRepositoryTest {
 
         private var isConnection = true
         private var numberData = NumberData("", "")
-        private val numberFactCalledList = mutableListOf<String>()
+        private val numberCalledList = mutableListOf<String>()
         private val randomNumberFactCalledList = mutableListOf<String>()
-        var numberFactCalledCount = 0
-        var randomNumberFactCalledCount = 0
+        var numberCalledCount = 0
+        var randomNumberCalledCount = 0
 
         fun changeConnection(connected: Boolean) {
             isConnection = connected
@@ -219,20 +221,20 @@ class BaseNumbersRepositoryTest {
             numberData = newNumberData
         }
 
-        override suspend fun numberFact(number: String): NumberData {
+        override suspend fun number(number: String): NumberData {
             return if (isConnection) {
-                numberFactCalledCount++
-                numberFactCalledList.add(number)
+                numberCalledCount++
+                numberCalledList.add(number)
                 numberData
             } else {
                 throw UnknownHostException()
             }
         }
 
-        override suspend fun randomNumberFact(number: String): NumberData {
+
+        override suspend fun randomNumber(): NumberData {
             return if (isConnection) {
-                randomNumberFactCalledCount++
-                randomNumberFactCalledList.add(number)
+                randomNumberCalledCount++
                 numberData
             } else {
                 throw UnknownHostException()
