@@ -12,7 +12,6 @@ interface NumbersCloudDataSource : FetchNumber {
 
           override suspend fun number(number: String): NumberData {
                val fact = numbersService.fact(number)
-
                return fact.map(fact)
           }
 

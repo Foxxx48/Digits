@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.create
 
@@ -16,14 +17,14 @@ class NumbersApp : Application() {
         super.onCreate()
         val retrofit = Retrofit.Builder()
             .baseUrl("http://numbersapi.com/")
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(NumbersService::class.java)
 
         GlobalScope.launch(Dispatchers.IO) {
             val dataSource = NumbersCloudDataSource.Base(service)
-            val fact = dataSource.number("10")
+            val fact = dataSource.randomNumber()
             println(fact)
         }
 
