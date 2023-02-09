@@ -2,6 +2,8 @@ package com.example.digits.main
 
 import android.app.Application
 import android.util.Log
+import com.example.digits.BuildConfig
+import com.example.digits.numbers.data.CloudModule
 import com.example.digits.numbers.data.NumbersCloudDataSource
 import com.example.digits.numbers.data.NumbersService
 import kotlinx.coroutines.Dispatchers
@@ -18,25 +20,9 @@ class NumbersApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://numbersapi.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-
-            .client(client).build()
-
-        val service = retrofit.create(NumbersService::class.java)
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val dataSource = NumbersCloudDataSource.Base(service)
-            val fact = dataSource.randomNumber()
-            println(fact)
-            Log.d("MYApp", "RandomNumberFact$fact")
-        }
-
+        val cloudModule = if (BuildConfig.DEBUG)
+            CloudModule.Debug()
+        else
+            CloudModule.Release()
     }
 }
