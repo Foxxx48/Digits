@@ -1,7 +1,7 @@
 package com.example.digits.numbers.data.cloud
 
-import com.example.digits.numbers.data.FetchNumber
 import com.example.digits.numbers.data.NumberData
+import com.example.digits.numbers.data.cache.FetchNumber
 
 interface NumbersCloudDataSource : FetchNumber {
      suspend fun randomNumber(): NumberData
