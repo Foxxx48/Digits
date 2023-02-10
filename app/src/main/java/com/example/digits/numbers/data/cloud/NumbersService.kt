@@ -1,4 +1,4 @@
-package com.example.digits.numbers.data
+package com.example.digits.numbers.data.cloud
 
 import retrofit2.http.GET
 import retrofit2.http.Path

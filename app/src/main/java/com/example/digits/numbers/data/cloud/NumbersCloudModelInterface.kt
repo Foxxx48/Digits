@@ -1,4 +1,6 @@
-package com.example.digits.numbers.data
+package com.example.digits.numbers.data.cloud
+
+import com.example.digits.numbers.data.NumberData
 
 interface NumbersCloudModelInterface {
 

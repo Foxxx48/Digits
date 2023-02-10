@@ -1,5 +1,6 @@
-package com.example.digits.numbers.data
+package com.example.digits.numbers.data.cloud
 
+import com.example.digits.numbers.data.NumberData
 import com.example.digits.numbers.presentation.Mapper
 
 data class NumbersCloudModel(

@@ -1,6 +1,6 @@
 package com.example.digits.numbers.data
 
-import com.example.digits.numbers.domain.HandleError
+import com.example.digits.numbers.data.cloud.NumbersCloudDataSource
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumbersRepository
 
