@@ -1,6 +1,6 @@
 package com.example.digits.numbers.data.cloud
 
-import com.example.digits.numbers.data.NumberData
+import com.example.digits.numbers.data.NumbersData
 import com.example.digits.numbers.presentation.Mapper
 
 data class NumbersCloudModel(
@@ -8,11 +8,11 @@ data class NumbersCloudModel(
     val number: Int = 0,
     val found: Boolean = true,
     val type: String = ""
-) : Mapper<NumberData, NumbersCloudModel>{
+) : Mapper<NumbersData, NumbersCloudModel>{
 
-    override fun map(source: NumbersCloudModel): NumberData {
+    override fun map(source: NumbersCloudModel): NumbersData {
         val id = source.number.toString()
-        return NumberData(id, source.text )
+        return NumbersData(id, source.text )
     }
 
 

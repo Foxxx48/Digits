@@ -1,6 +1,6 @@
 package com.example.digits.numbers.data
 
-data class NumberData(
+data class NumbersData(
     val id: String,
     val fact: String
 ) {

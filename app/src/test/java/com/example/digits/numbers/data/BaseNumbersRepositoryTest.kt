@@ -1,5 +1,6 @@
 package com.example.digits.numbers.data
 
+import com.example.digits.numbers.data.cache.NumbersCacheDataSource
 import com.example.digits.numbers.data.cloud.NumbersCloudDataSource
 import com.example.digits.numbers.domain.NoInternetConnectionException
 import com.example.digits.numbers.domain.NumberFact
@@ -39,8 +40,8 @@ class BaseNumbersRepositoryTest {
 
         cacheDataSource.replaceData(
             listOf(
-                NumberData("5", "fact of 5"),
-                NumberData("6", "fact of 6")
+                NumbersData("5", "fact of 5"),
+                NumbersData("6", "fact of 6")
             )
         )
 
@@ -58,7 +59,7 @@ class BaseNumbersRepositoryTest {
 
     @Test
     fun test_number_fact_not_cached_success() = runBlocking {
-        cloudDataSource.changeExpected(NumberData("3", "fact of 3"))
+        cloudDataSource.changeExpected(NumbersData("3", "fact of 3"))
         cacheDataSource.replaceData(emptyList())
 
 
@@ -74,7 +75,7 @@ class BaseNumbersRepositoryTest {
         assertEquals(0, cacheDataSource.numberCalledList.size)
 
         assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
-        assertEquals(NumberData("3", "fact of 3"), cacheDataSource.data[0])
+        assertEquals(NumbersData("3", "fact of 3"), cacheDataSource.data[0])
     }
 
     @Test(expected = NoInternetConnectionException::class)
@@ -97,8 +98,8 @@ class BaseNumbersRepositoryTest {
     @Test
     fun test_number_fact_cached_success() = runBlocking {
         cloudDataSource.changeConnection(true)
-        cloudDataSource.changeExpected(NumberData("3", "cloud 3"))
-        cacheDataSource.replaceData(listOf(NumberData("3", "fact of 3")))
+        cloudDataSource.changeExpected(NumbersData("3", "cloud 3"))
+        cacheDataSource.replaceData(listOf(NumbersData("3", "fact of 3")))
 
         val actual = repository.numberFact("3")
         val expected = NumberFact("3", "fact of 3")
@@ -116,7 +117,7 @@ class BaseNumbersRepositoryTest {
 
     @Test
     fun test_random_number_fact_not_cached_success() = runBlocking {
-        cloudDataSource.changeExpected(NumberData("3", "fact of 3"))
+        cloudDataSource.changeExpected(NumbersData("3", "fact of 3"))
         cacheDataSource.replaceData(emptyList())
 
 
@@ -130,7 +131,7 @@ class BaseNumbersRepositoryTest {
 
         assertEquals(0, cacheDataSource.numberCalledList.size)
         assertEquals(1, cacheDataSource.saveNumberFactCalledCount)
-        assertEquals(NumberData("3", "fact of 3"), cacheDataSource.data[0])
+        assertEquals(NumbersData("3", "fact of 3"), cacheDataSource.data[0])
     }
 
     @Test(expected = NoInternetConnectionException::class)
@@ -151,8 +152,8 @@ class BaseNumbersRepositoryTest {
     @Test
     fun test_random_number_fact_cached() = runBlocking {
         cloudDataSource.changeConnection(true)
-        cloudDataSource.changeExpected(NumberData("3", "cloud 3"))
-        cacheDataSource.replaceData(listOf(NumberData("3", "fact of 3")))
+        cloudDataSource.changeExpected(NumbersData("3", "cloud 3"))
+        cacheDataSource.replaceData(listOf(NumbersData("3", "fact of 3")))
 
         val actual = repository.randomNumberFact()
         val expected = NumberFact("3", "cloud 3")
@@ -174,43 +175,43 @@ class BaseNumbersRepositoryTest {
         var allNumbersCalledCount = 0
 
         var saveNumberFactCalledCount = 0
-        val saveNumberFactCalledList = mutableListOf<NumberData>()
+        val saveNumberFactCalledList = mutableListOf<NumbersData>()
 
-        val data = mutableListOf<NumberData>()
+        val data = mutableListOf<NumbersData>()
 
 
-        fun replaceData(newData: List<NumberData>) {
+        fun replaceData(newData: List<NumbersData>) {
             data.clear()
             data.addAll(newData)
         }
 
-        override suspend fun allNumbers(): List<NumberData> {
+        override suspend fun allNumbers(): List<NumbersData> {
             allNumbersCalledCount++
             return data
         }
 
         override suspend fun contains(number: String): Boolean {
-            val result = data.find { it.map(NumberData.Mapper.Matches(number)) } != null
+            val result = data.find { it.map(NumbersData.Mapper.Matches(number)) } != null
             containsCalledList.add(result)
             return result
         }
 
-        override suspend fun number(number: String): NumberData {
+        override suspend fun number(number: String): NumbersData {
             numberCalledList.add(number)
             return data[0]
         }
 
-        override suspend fun saveNumber(numberData: NumberData) {
-            saveNumberFactCalledList.add(numberData)
+        override suspend fun saveNumber(numbersData: NumbersData) {
+            saveNumberFactCalledList.add(numbersData)
             saveNumberFactCalledCount++
-            data.add(numberData)
+            data.add(numbersData)
         }
     }
 
     private class TestNumbersCloudDataSource : NumbersCloudDataSource {
 
         private var isConnection = true
-        private var numberData = NumberData("", "")
+        private var numbersData = NumbersData("", "")
         private val numberCalledList = mutableListOf<String>()
         private val randomNumberFactCalledList = mutableListOf<String>()
         var numberCalledCount = 0
@@ -220,25 +221,25 @@ class BaseNumbersRepositoryTest {
             isConnection = connected
         }
 
-        fun changeExpected(newNumberData: NumberData) {
-            numberData = newNumberData
+        fun changeExpected(newNumbersData: NumbersData) {
+            numbersData = newNumbersData
         }
 
-        override suspend fun number(number: String): NumberData {
+        override suspend fun number(number: String): NumbersData {
             return if (isConnection) {
                 numberCalledCount++
                 numberCalledList.add(number)
-                numberData
+                numbersData
             } else {
                 throw UnknownHostException()
             }
         }
 
 
-        override suspend fun randomNumber(): NumberData {
+        override suspend fun randomNumber(): NumbersData {
             return if (isConnection) {
                 randomNumberCalledCount++
-                numberData
+                numbersData
             } else {
                 throw UnknownHostException()
             }
