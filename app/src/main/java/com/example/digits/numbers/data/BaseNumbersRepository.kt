@@ -1,6 +1,7 @@
 package com.example.digits.numbers.data
 
-import com.example.digits.numbers.domain.HandleError
+import com.example.digits.numbers.data.cache.NumbersCacheDataSource
+import com.example.digits.numbers.data.cloud.NumbersCloudDataSource
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumbersRepository
 
@@ -9,7 +10,7 @@ class BaseNumbersRepository(
     private val cloudDataSource: NumbersCloudDataSource,
     private val cacheDataSource: NumbersCacheDataSource,
     private val handleDataRequest: HandleDataRequest,
-    private val mapperToDomain: NumberData.Mapper<NumberFact>
+    private val mapperToDomain: NumbersData.Mapper<NumberFact>
     ) : NumbersRepository {
     override suspend fun allNumbers(): List<NumberFact> {
         val data = cacheDataSource.allNumbers()

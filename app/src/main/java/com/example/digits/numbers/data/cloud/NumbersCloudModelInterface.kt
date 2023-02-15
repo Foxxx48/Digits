@@ -1,4 +1,6 @@
-package com.example.digits.numbers.data
+package com.example.digits.numbers.data.cloud
+
+import com.example.digits.numbers.data.NumbersData
 
 interface NumbersCloudModelInterface {
 
@@ -20,10 +22,10 @@ interface NumbersCloudModelInterface {
         fun map(text: String, number: Int, found: Boolean, type: String): T
 
         class CloudModelToDomainModel(val text: String = "", val  number: Int = 0, found: Boolean = true, type: String = "") :
-            Mapper<NumberData> {
-            override fun map(text: String, number: Int, found: Boolean, type: String): NumberData {
+            Mapper<NumbersData> {
+            override fun map(text: String, number: Int, found: Boolean, type: String): NumbersData {
                 val id = number.toString()
-                return NumberData(id, text)
+                return NumbersData(id, text)
 
             }
         }
