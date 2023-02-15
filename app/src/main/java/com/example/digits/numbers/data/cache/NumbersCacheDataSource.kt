@@ -31,7 +31,7 @@ interface NumbersCacheDataSource : FetchNumber {
         }
 
         override suspend fun saveNumber(numbersData: NumbersData) = mutex.withLock {
-            numbersDao.saveNumber(numbersData.map(cacheMapper))
+            numbersDao.insert(numbersData.map(cacheMapper))
         }
 
         override suspend fun number(number: String): NumbersData = mutex.withLock {

@@ -17,7 +17,7 @@ import java.io.IOException
 @RunWith(AndroidJUnit4::class)
 class RoomTest {
 
-    private lateinit var database : NumbersDatabase
+    private lateinit var database: NumbersDatabase
     private lateinit var dao: NumbersDao
 
     @Before
@@ -38,12 +38,28 @@ class RoomTest {
     @Test
     fun test_add_and_check() {
         val number = NumbersCache("4", "4", 10)
+        assertEquals(null, dao.number("4"))
 
-        dao.saveNumber(number)
+        dao.insert(number)
+        val actualList = dao.allNumbers()
+        assertEquals(number, actualList[0])
 
-        val actual = dao.allNumbers()
+        val actual = dao.number("4")
+        assertEquals(number, actual)
+    }
 
-        assertEquals(number, actual[0])
+    @Test
+    fun test_add_2_times() {
+        val number = NumbersCache("4", "4", 10)
+        dao.insert(number)
+        var actualList = dao.allNumbers()
+        assertEquals(number, actualList[0])
+
+        val new = NumbersCache("4", "4", 15)
+        dao.insert(new)
+        actualList = dao.allNumbers()
+        assertEquals(1, actualList.size)
+        assertEquals(new, actualList[0])
     }
 
 }

@@ -15,7 +15,7 @@ interface NumbersDao {
     fun number(number: String): NumbersCache?
 
     @Insert(entity = NumbersCache::class, onConflict = OnConflictStrategy.REPLACE)
-    fun saveNumber(number: NumbersCache)
+    fun insert(number: NumbersCache)
 
     @Query(value = "SELECT * FROM numbers_table WHERE number = :number")
     fun contains(number: String) : Boolean
