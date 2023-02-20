@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digits.R
 
@@ -27,9 +28,11 @@ class NumbersAdapter(private val clickListener: ClickListener) :
     }
 
     override fun map(source: List<NumberUi>) {
+        val diff = DiffUtilCallback(list, source)
+        val result = DiffUtil.calculateDiff(diff)
         list.clear()
         list.addAll(source)
-        notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)
     }
 }
 
@@ -52,4 +55,26 @@ class NumbersViewHolder(
 
 interface ClickListener {
     fun click(item: NumberUi)
+}
+
+class DiffUtilCallback(
+    private val oldList: List<NumberUi>,
+    private val newList: List<NumberUi>
+) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int {
+        return oldList.size
+    }
+
+    override fun getNewListSize(): Int {
+        return newList.size
+    }
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].map(newList[newItemPosition])
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].equals(newList[newItemPosition])
+    }
+
 }
