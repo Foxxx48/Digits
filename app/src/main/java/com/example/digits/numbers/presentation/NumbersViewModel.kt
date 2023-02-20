@@ -16,7 +16,7 @@ interface NumbersViewModel : FetchNumbers, ObserveNumbers {
         private val interactor: NumbersInteractor,
 
     ) : ViewModel(), NumbersViewModel {
-        override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) {
+        override fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) {
             communications.observeProgress(owner, observer)
         }
 

@@ -22,11 +22,11 @@ interface HandleNumbersRequest {
             coroutineScope: CoroutineScope,
             block: suspend () -> NumbersResult
         ) {
-            communications.showProgress(true)
+            communications.showProgress(View.VISIBLE)
             coroutineScope.launch(dispatchers.io()) {
                 val result = block.invoke()
                 withContext(dispatchers.ui()) {
-                    communications.showProgress(false)
+                    communications.showProgress(View.GONE)
                     result.map(numbersResultMapper)
                 }
             }
