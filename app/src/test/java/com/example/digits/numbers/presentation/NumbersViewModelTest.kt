@@ -1,5 +1,6 @@
 package com.example.digits.numbers.presentation
 
+import android.view.View
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
@@ -55,12 +56,12 @@ class NumbersViewModelTest : BaseTest() {
         viewModel.init(isFirstRun = true)
 
 
-        assertEquals(true, communications.progressCalledList[0])
+        assertEquals(View.VISIBLE, communications.progressCalledList[0])
         assertEquals(1, interactor.initCalledList.size)
 
 
 
-        assertEquals(false, communications.progressCalledList[1])
+        assertEquals(View.GONE, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
         assertEquals(true, communications.stateCalledList[0] is UiState.Success)
@@ -73,12 +74,12 @@ class NumbersViewModelTest : BaseTest() {
         viewModel.fetchRandomNumberFact()
 
 //        assertEquals(4, communications.progressCalledList.size)
-        assertEquals(true, communications.progressCalledList[2])
+        assertEquals(View.VISIBLE, communications.progressCalledList[2])
 
         assertEquals(1, interactor.fetchAboutRandomNumberCalledList.size)
 
         assertEquals(4, communications.progressCalledList.size)
-        assertEquals(false, communications.progressCalledList[3])
+        assertEquals(View.GONE, communications.progressCalledList[3])
 
         assertEquals(2, communications.stateCalledList.size)
         assertEquals(UiState.Error("no internet connection"), communications.stateCalledList[1])
@@ -123,7 +124,7 @@ class NumbersViewModelTest : BaseTest() {
         viewModel.fetchNumberFact("45")
 
 
-        assertEquals(true, communications.progressCalledList[0])
+        assertEquals(View.VISIBLE, communications.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
 
@@ -133,7 +134,7 @@ class NumbersViewModelTest : BaseTest() {
         )
 
         assertEquals(2, communications.progressCalledList.size)
-        assertEquals(false, communications.progressCalledList[1])
+        assertEquals(View.GONE, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
         assertEquals(true, communications.stateCalledList[0] is UiState.Success)
