@@ -82,7 +82,7 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(View.GONE, communications.progressCalledList[3])
 
         assertEquals(2, communications.stateCalledList.size)
-        assertEquals(UiState.Error("no internet connection"), communications.stateCalledList[1])
+        assertEquals(UiState.ShowError("no internet connection"), communications.stateCalledList[1])
 
         assertEquals(0, communications.timeShowList)
 
@@ -105,7 +105,7 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(0, communications.progressCalledList.size)
 
 
-        assertEquals(UiState.Error("entered number is empty"), communications.stateCalledList[0])
+        assertEquals(UiState.ShowError("entered number is empty"), communications.stateCalledList[0])
 
         assertEquals(0, communications.timeShowList)
 
@@ -141,6 +141,13 @@ class NumbersViewModelTest : BaseTest() {
 
         assertEquals(1, communications.timeShowList)
         assertEquals(NumberUi("45", "fact about 45"), communications.numbersList[0])
+    }
+    @Test
+    fun `test clear error`() {
+        viewModel.clearError()
+
+        assertEquals(1, communications.stateCalledList.size)
+        assertEquals(true, communications.stateCalledList[0] is UiState.ClearError)
     }
 
     private class TestManagerResources : ManageResources {

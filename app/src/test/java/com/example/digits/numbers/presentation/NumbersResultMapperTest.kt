@@ -26,7 +26,7 @@ class NumbersResultMapperTest : BaseTest() {
 
         mapper.map("Error")
         assertEquals(1, communications.stateCalledList.size)
-        assertEquals(UiState.Error("Error"), communications.stateCalledList[0])
+        assertEquals(UiState.ShowError("Error"), communications.stateCalledList[0])
     }
 
     @Test
