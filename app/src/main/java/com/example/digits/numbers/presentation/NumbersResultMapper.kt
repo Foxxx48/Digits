@@ -15,6 +15,6 @@ class NumbersResultMapper(
     }
 
     override fun map(errorMassage: String) {
-        communications.showState(UiState.Error(errorMassage))
+        communications.showState(UiState.ShowError(errorMassage))
     }
 }

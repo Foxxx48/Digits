@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.digits.R
 import com.example.digits.numbers.domain.NumbersInteractor
-import kotlinx.coroutines.launch
 
-interface NumbersViewModel : FetchNumbers, ObserveNumbers {
+interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError {
     class Base(
         private val handleNumbersRequest: HandleNumbersRequest,
         private val manageResources: ManageResources,
@@ -16,7 +15,7 @@ interface NumbersViewModel : FetchNumbers, ObserveNumbers {
         private val interactor: NumbersInteractor,
 
     ) : ViewModel(), NumbersViewModel {
-        override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) {
+        override fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) {
             communications.observeProgress(owner, observer)
         }
 
@@ -28,9 +27,13 @@ interface NumbersViewModel : FetchNumbers, ObserveNumbers {
             communications.observeList(owner, observer)
         }
 
+        override fun clearError() {
+            communications.showState(UiState.ClearError())
+        }
+
         override fun fetchNumberFact(number: String) {
             if (number.isEmpty()) {
-                communications.showState(UiState.Error(manageResources.string(R.string.empty_number_error_message)))
+                communications.showState(UiState.ShowError(manageResources.string(R.string.empty_number_error_message)))
             } else {
                 handleNumbersRequest.handle(viewModelScope) {
                     interactor.factAboutNumber(number)
@@ -60,4 +63,8 @@ interface FetchNumbers {
     fun init(isFirstRun: Boolean)
 
     fun fetchRandomNumberFact()
+}
+
+interface ClearError {
+    fun clearError()
 }
