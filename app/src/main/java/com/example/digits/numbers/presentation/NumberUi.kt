@@ -7,6 +7,8 @@ data class NumberUi(
     private val id: String,
     private val fact: String
 ) : Mapper<Boolean, NumberUi> {
+
+    fun ui() = "$id\n\n$fact"
     fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
 
     interface Mapper<T> {
