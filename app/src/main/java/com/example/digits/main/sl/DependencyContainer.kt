@@ -6,7 +6,7 @@ import com.example.digits.numbers.sl.NumbersModule
 import java.lang.IllegalStateException
 
 interface DependencyContainer {
-    fun <T : ViewModel> module(clast: Class<T>): Module<*>
+    fun <T: ViewModel> module(clast: Class<T>): Module<*>
 
     class Error : DependencyContainer {
         override fun <T : ViewModel> module(clast: Class<T>): Module<*> {
@@ -20,7 +20,7 @@ interface DependencyContainer {
     ) : DependencyContainer {
 
         override fun <T : ViewModel> module(clast: Class<T>): Module<*> =
-            if (clast == NumbersViewModel::class.java)
+            if (clast == NumbersViewModel.Base::class.java)
                 NumbersModule(core)
             else
                 dependencyContainer.module(clast)

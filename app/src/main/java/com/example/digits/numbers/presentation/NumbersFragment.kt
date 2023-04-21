@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digits.R
+import com.example.digits.details.presentation.DetailsFragment
 import com.example.digits.main.sl.ProvideViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -22,7 +23,7 @@ class NumbersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(NumbersViewModel::class.java, this)
+        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(NumbersViewModel.Base::class.java, this)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,13 +44,13 @@ class NumbersFragment : Fragment() {
 
         val adapter = NumbersAdapter(object : ClickListener {
             override fun click(item: NumberUi) {
-                val value = item.ui()
+//                val value = item.ui()
 
-                //                val detailFragment = DetailsFragment.newInstance(item.ui())
-//                requireActivity().supportFragmentManager.beginTransaction()
-//                    .add(R.id.container, detailFragment)
-//                    .addToBackStack(detailFragment.javaClass.simpleName)
-//                    .commit()
+                                val detailFragment = DetailsFragment.newInstance(item.ui())
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .add(R.id.container, detailFragment)
+                    .addToBackStack(detailFragment.javaClass.simpleName)
+                    .commit()
 
             }
 

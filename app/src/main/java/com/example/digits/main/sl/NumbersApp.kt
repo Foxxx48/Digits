@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import com.example.digits.BuildConfig
-import com.example.digits.numbers.data.cloud.CloudModule
+
 
 class NumbersApp : Application(), ProvideViewModel {
 
@@ -13,9 +12,10 @@ class NumbersApp : Application(), ProvideViewModel {
 
     override fun onCreate() {
         super.onCreate()
+
         viewModelsFactory = ViewModelsFactory(
             DependencyContainer.Base(
-                Core.Base(!BuildConfig.DEBUG)
+                Core.Base(this, true/*!BuildConfig.DEBUG*/)
             )
         )
 
