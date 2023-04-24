@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digits.R
@@ -20,6 +21,11 @@ import com.google.android.material.textfield.TextInputLayout
 class NumbersFragment : Fragment() {
 
     lateinit var viewModel: NumbersViewModel
+    lateinit var inputText: TextInputEditText
+
+    private val watcher = object : SimpleTextWatcher() {
+        override fun afterTextChanged(s: Editable?) = viewModel.clearError()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +46,7 @@ class NumbersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        val inputText = view.findViewById<TextInputEditText>(R.id.et_textfield)
+        inputText = view.findViewById<TextInputEditText>(R.id.et_textfield)
         val textInputLayout = view.findViewById<TextInputLayout>(R.id.et_layout)
         val factButton = view.findViewById<Button>(R.id.btn_get_fact)
         val randomButton = view.findViewById<Button>(R.id.btn_random_fact)
@@ -53,14 +59,6 @@ class NumbersFragment : Fragment() {
                     .add(R.id.container, detailFragment)
                     .addToBackStack(detailFragment.javaClass.simpleName)
                     .commit()
-
-            }
-
-        })
-        inputText.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                super.afterTextChanged(s)
-                viewModel.clearError()
             }
         })
 
@@ -88,6 +86,16 @@ class NumbersFragment : Fragment() {
 
         viewModel.init(savedInstanceState == null)
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        inputText.removeTextChangedListener(watcher)
+    }
+
+    override fun onResume() {
+        inputText.addTextChangedListener(watcher)
+        super.onResume()
     }
 
     abstract class SimpleTextWatcher : TextWatcher {
