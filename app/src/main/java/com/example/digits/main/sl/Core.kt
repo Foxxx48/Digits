@@ -20,9 +20,9 @@ interface Core : CloudModule, CacheModule, ManageResources {
         }
         val cloudModule by lazy {
             if (isRelease)
-                CloudModule.Release()
+                CloudModule.Base()
             else
-                CloudModule.Debug()
+                CloudModule.Mock()
         }
 
         val cacheModule by lazy {

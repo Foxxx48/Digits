@@ -8,8 +8,10 @@ interface NumbersCloudDataSource : FetchNumber {
 
      class Base(private val numbersService: NumbersService) : NumbersCloudDataSource {
           override suspend fun randomNumber(): NumbersData {
-               val randomFact = numbersService.randomFact()
-               return randomFact.map(randomFact)
+               val response = numbersService.randomFact()
+               val body = response.body() ?: throw IllegalStateException("service unavailable")
+//               val headers = response.headers()
+               return body.map(body)
 // with using the NumbersCloudModelInterface.Base
 //               return randomFact.map(NumbersCloudModelInterface.Mapper.CloudModelToDomainModel())
           }

@@ -28,7 +28,7 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val args = requireArguments().getString(TEXT)
-        view.findViewById<TextView>(R.id.tv_Hello).text = args
+        view.findViewById<TextView>(R.id.tv_Details).text = args
 
     }
 

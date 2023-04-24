@@ -1,5 +1,6 @@
 package com.example.digits.numbers.data.cloud
 
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -15,6 +16,6 @@ interface NumbersService {
     suspend fun fact(@Path("id") id: String): NumbersCloudModel
 
     @GET("random/math/?json")
-    suspend fun randomFact(): NumbersCloudModel
+    suspend fun randomFact(): Response<NumbersCloudModel>
 
 }
