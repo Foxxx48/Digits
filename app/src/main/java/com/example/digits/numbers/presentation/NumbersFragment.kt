@@ -23,8 +23,12 @@ class NumbersFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(NumbersViewModel.Base::class.java, this)
+        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(
+            NumbersViewModel.Base::class.java,
+            this
+        )
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,12 +45,10 @@ class NumbersFragment : Fragment() {
         val factButton = view.findViewById<Button>(R.id.btn_get_fact)
         val randomButton = view.findViewById<Button>(R.id.btn_random_fact)
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_history)
-
+        val mapper = DetailsUi()
         val adapter = NumbersAdapter(object : ClickListener {
             override fun click(item: NumberUi) {
-//                val value = item.ui()
-
-                                val detailFragment = DetailsFragment.newInstance(item.ui())
+                val detailFragment = DetailsFragment.newInstance(item.map(mapper))
                 requireActivity().supportFragmentManager.beginTransaction()
                     .add(R.id.container, detailFragment)
                     .addToBackStack(detailFragment.javaClass.simpleName)

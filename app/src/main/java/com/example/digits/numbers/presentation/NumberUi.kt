@@ -8,7 +8,7 @@ data class NumberUi(
     private val fact: String
 ) : Mapper<Boolean, NumberUi> {
 
-    fun ui() = "$id\n\n$fact"
+
     fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
 
     interface Mapper<T> {
@@ -16,6 +16,10 @@ data class NumberUi(
     }
 
     override fun map(source: NumberUi): Boolean = source.id == id
+}
+
+class DetailsUi : NumberUi.Mapper<String> {
+    override fun map(id: String, fact: String): String = "$id\n\n$fact"
 }
 
 class ListItemUi(
