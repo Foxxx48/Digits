@@ -11,25 +11,23 @@ interface Core : CloudModule, CacheModule, ManageResources {
     fun provideDispatchers(): DispatchersList
 
     override fun <T> service(clast: Class<T>): T
-    class Base(context: Context, private val isRelease: Boolean) : Core {
+   class Base(
+        context: Context,
+        private val provideInstances: ProvideInstances
+    ) : Core {
 
         private val manageResources: ManageResources = ManageResources.Base(context)
 
         private val dispatchersList by lazy {
             DispatchersList.Base()
         }
+
         val cloudModule by lazy {
-            if (isRelease)
-                CloudModule.Base()
-            else
-                CloudModule.Mock()
+            provideInstances.provideCloudModule()
         }
 
         val cacheModule by lazy {
-            if (isRelease)
-               CacheModule.Base(context)
-            else
-                CacheModule.Mock(context)
+            provideInstances.provideCacheModule()
         }
 
         override fun provideDispatchers(): DispatchersList = dispatchersList

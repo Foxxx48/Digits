@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import com.example.digits.BuildConfig
+import com.google.gson.internal.GsonBuildConfig
 
 
 class NumbersApp : Application(), ProvideViewModel {
@@ -12,10 +14,15 @@ class NumbersApp : Application(), ProvideViewModel {
 
     override fun onCreate() {
         super.onCreate()
+        val provideInstances = if (!BuildConfig.DEBUG)
+            ProvideInstances.Mock(this)
+        else
+            ProvideInstances.Release(this)
 
         viewModelsFactory = ViewModelsFactory(
             DependencyContainer.Base(
-                Core.Base(this, true/*!BuildConfig.DEBUG*/)
+                Core.Base(this,
+                provideInstances)
             )
         )
 

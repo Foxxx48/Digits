@@ -22,6 +22,7 @@ class NavigationTest {
     var activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Test
+
     fun detail_navigation(){
         onView(withId(R.id.et_textfield)).perform(typeText("10"))
         onView(withId(R.id.btn_get_fact)).perform(click())

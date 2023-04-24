@@ -19,6 +19,16 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        unitTests {
+            all {
+                // Исключаем выполнение UI-тестов с аннотацией androidx.test.filters.LargeTest
+                // во время запуска приложения на эмуляторе
+                excludeAnnotations = ['androidx.test.filters.LargeTest']
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
