@@ -8,7 +8,7 @@ import androidx.room.Query
 @Dao
 interface NumbersDao {
 
-    @Query(value = "SELECT * FROM numbers_table ORDER BY date ASC")
+    @Query(value = "SELECT * FROM numbers_table ORDER BY date DESC")
     fun allNumbers(): List<NumbersCache>
 
     @Query(value = "SELECT * FROM numbers_table WHERE number = :number LIMIT 1")

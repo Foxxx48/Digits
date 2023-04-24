@@ -8,6 +8,7 @@ import com.example.digits.R
 import com.example.digits.numbers.domain.NumbersInteractor
 
 interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError {
+
     class Base(
         private val handleNumbersRequest: HandleNumbersRequest,
         private val manageResources: ManageResources,
