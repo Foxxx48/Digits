@@ -14,6 +14,7 @@ class NumbersApp : Application(), ProvideViewModel {
 
     override fun onCreate() {
         super.onCreate()
+
         val provideInstances = if (!BuildConfig.DEBUG)
             ProvideInstances.Mock(this)
         else

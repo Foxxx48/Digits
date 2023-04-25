@@ -3,6 +3,7 @@ package com.example.digits.main.presentations
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import com.example.digits.R
@@ -14,16 +15,11 @@ class MainActivity : AppCompatActivity(), ProvideViewModel {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         if (savedInstanceState == null)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, NumbersFragment())
-                .commit()
-
+            NavigationStrategy.Replace(NumbersFragment())
+                .navigate(supportFragmentManager, R.id.container)
 
     }
-
     companion object {
         private const val KEY = "Key"
 
@@ -31,9 +27,9 @@ class MainActivity : AppCompatActivity(), ProvideViewModel {
             Log.d(KEY, "$any")
         }
     }
-
     override fun <T : ViewModel> provideViewModel(clast: Class<T>, owner: ViewModelStoreOwner): T =
         (application as ProvideViewModel).provideViewModel(clast, owner)
+
 
 
 }
