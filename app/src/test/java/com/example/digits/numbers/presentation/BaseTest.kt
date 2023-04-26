@@ -44,7 +44,7 @@ abstract class BaseTest {
 
         override fun observeState(owner: LifecycleOwner, observer: Observer<UiState>) = Unit
 
-        override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>)  = Unit
+        override fun observeList(owner: LifecycleOwner, observer: Observer<List<NumberUi>>) = Unit
     }
 
 }

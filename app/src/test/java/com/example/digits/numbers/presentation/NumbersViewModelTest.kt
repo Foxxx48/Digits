@@ -1,9 +1,6 @@
 package com.example.digits.numbers.presentation
 
-import android.content.Context
-import android.provider.Settings.Global.getString
 import android.view.View
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.digits.main.presentations.NavigationStrategy
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumberUiMapper
@@ -15,17 +12,9 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.JUnitCore
-import org.junit.runner.RunWith
-import org.junit.runner.manipulation.Ordering
-import org.mockito.Mock
-import org.mockito.Mockito.mock
-import org.mockito.runners.MockitoJUnitRunner
 
 
 class NumbersViewModelTest : BaseTest() {
-
-
 
     private lateinit var navigation: TestNavigationCommunication
     private lateinit var communications: TestNumbersCommunications
