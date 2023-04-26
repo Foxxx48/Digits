@@ -5,15 +5,23 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.digits.R
+import com.example.digits.details.presentation.DetailsFragment
+import com.example.digits.main.presentations.Init
+import com.example.digits.main.presentations.NavigationCommunication
+import com.example.digits.main.presentations.NavigationStrategy
 import com.example.digits.numbers.domain.NumbersInteractor
 
-interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError {
+interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError, Init {
+    fun showDetails(item: NumberUi)
+
 
     class Base(
         private val handleNumbersRequest: HandleNumbersRequest,
         private val manageResources: ManageResources,
         private val communications: NumbersCommunications,
         private val interactor: NumbersInteractor,
+        private val navigationCommunication: NavigationCommunication.Mutate,
+        private val detailsMapper: NumberUi.Mapper<String>
 
     ) : ViewModel(), NumbersViewModel {
         override fun observeProgress(owner: LifecycleOwner, observer: Observer<Int>) {
@@ -30,6 +38,12 @@ interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError {
 
         override fun clearError() {
             communications.showState(UiState.ClearError())
+        }
+
+        override fun showDetails(item: NumberUi) {
+            navigationCommunication.map(
+                NavigationStrategy.Add(DetailsFragment.newInstance(item.map(detailsMapper)))
+            )
         }
 
         override fun fetchNumberFact(number: String) {
@@ -60,9 +74,6 @@ interface NumbersViewModel : FetchNumbers, ObserveNumbers, ClearError {
 
 interface FetchNumbers {
     fun fetchNumberFact(number: String)
-
-    fun init(isFirstRun: Boolean)
-
     fun fetchRandomNumberFact()
 }
 

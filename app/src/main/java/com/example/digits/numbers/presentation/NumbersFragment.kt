@@ -45,20 +45,17 @@ class NumbersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         inputText = view.findViewById<TextInputEditText>(R.id.et_textfield)
         val textInputLayout = view.findViewById<TextInputLayout>(R.id.et_layout)
         val factButton = view.findViewById<Button>(R.id.btn_get_fact)
         val randomButton = view.findViewById<Button>(R.id.btn_random_fact)
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_history)
-        val mapper = DetailsUi()
+
         val adapter = NumbersAdapter(object : ClickListener {
             override fun click(item: NumberUi) {
-                val detailFragment = DetailsFragment.newInstance(item.map(mapper))
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .add(R.id.container, detailFragment)
-                    .addToBackStack(detailFragment.javaClass.simpleName)
-                    .commit()
+                viewModel.showDetails(item)
             }
         })
 
@@ -82,7 +79,6 @@ class NumbersFragment : Fragment() {
         viewModel.observeList(this) {
             adapter.map(it)
         }
-
 
         viewModel.init(savedInstanceState == null)
 

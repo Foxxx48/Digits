@@ -1,22 +1,25 @@
 package com.example.digits.main.sl
 
 import android.content.Context
+import com.example.digits.main.presentations.NavigationCommunication
 import com.example.digits.numbers.data.cache.CacheModule
 import com.example.digits.numbers.data.cache.NumbersDatabase
 import com.example.digits.numbers.data.cloud.CloudModule
 import com.example.digits.numbers.presentation.DispatchersList
 import com.example.digits.numbers.presentation.ManageResources
 
-interface Core : CloudModule, CacheModule, ManageResources {
+interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation {
     fun provideDispatchers(): DispatchersList
 
     override fun <T> service(clast: Class<T>): T
-   class Base(
+    class Base(
         context: Context,
         private val provideInstances: ProvideInstances
     ) : Core {
 
         private val manageResources: ManageResources = ManageResources.Base(context)
+
+        private val navigationCommunication = NavigationCommunication.Base()
 
         private val dispatchersList by lazy {
             DispatchersList.Base()
@@ -37,5 +40,11 @@ interface Core : CloudModule, CacheModule, ManageResources {
         override fun provideDatabase(): NumbersDatabase = cacheModule.provideDatabase()
 
         override fun string(id: Int): String = manageResources.string(id)
+        override fun provideNavigation() = navigationCommunication
     }
+
+}
+
+interface ProvideNavigation {
+    fun provideNavigation(): NavigationCommunication.Mutable
 }

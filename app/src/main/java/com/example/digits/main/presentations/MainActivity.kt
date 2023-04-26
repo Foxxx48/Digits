@@ -11,15 +11,21 @@ import com.example.digits.main.sl.ProvideViewModel
 import com.example.digits.numbers.presentation.NumbersFragment
 
 class MainActivity : AppCompatActivity(), ProvideViewModel {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null)
-            NavigationStrategy.Replace(NumbersFragment())
-                .navigate(supportFragmentManager, R.id.container)
+        val viewModel = provideViewModel(MainViewModel::class.java, this)
 
+        viewModel.observe(this) { strategy ->
+            strategy.navigate(supportFragmentManager, R.id.container)
+        }
+
+        viewModel.init(savedInstanceState == null)
     }
+
     companion object {
         private const val KEY = "Key"
 
@@ -27,9 +33,9 @@ class MainActivity : AppCompatActivity(), ProvideViewModel {
             Log.d(KEY, "$any")
         }
     }
+
     override fun <T : ViewModel> provideViewModel(clast: Class<T>, owner: ViewModelStoreOwner): T =
         (application as ProvideViewModel).provideViewModel(clast, owner)
-
 
 
 }

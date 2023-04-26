@@ -1,6 +1,10 @@
 package com.example.digits.numbers.presentation
 
+import android.content.Context
+import android.provider.Settings.Global.getString
 import android.view.View
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.digits.main.presentations.NavigationStrategy
 import com.example.digits.numbers.domain.NumberFact
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
@@ -11,9 +15,19 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.JUnitCore
+import org.junit.runner.RunWith
+import org.junit.runner.manipulation.Ordering
+import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.runners.MockitoJUnitRunner
+
 
 class NumbersViewModelTest : BaseTest() {
 
+
+
+    private lateinit var navigation: TestNavigationCommunication
     private lateinit var communications: TestNumbersCommunications
     private lateinit var interactor: TestNumbersInteractor
     private lateinit var testManageResources: TestManagerResources
@@ -22,11 +36,13 @@ class NumbersViewModelTest : BaseTest() {
 
     @Before
     fun init() {
-
+        navigation = TestNavigationCommunication()
         dispatchersList = TestDispatcherList()
         communications = TestNumbersCommunications()
         interactor = TestNumbersInteractor()
         testManageResources = TestManagerResources()
+        val detailsMapper = TestUiMapper()
+        val mapper = NumbersResultMapper(communications, NumberUiMapper())
 
         viewModel = NumbersViewModel.Base(
             HandleNumbersRequest.Base(
@@ -38,7 +54,9 @@ class NumbersViewModelTest : BaseTest() {
             ),
             testManageResources,
             communications,
-            interactor
+            interactor,
+            navigation,
+            detailsMapper
         )
     }
 
@@ -150,6 +168,17 @@ class NumbersViewModelTest : BaseTest() {
         assertEquals(true, communications.stateCalledList[0] is UiState.ClearError)
     }
 
+
+    @Test
+    fun `test navigation details`() {
+        viewModel.showDetails(NumberUi("0", "fact"))
+
+//        assertEquals("0 fact", interactor.details)
+        assertEquals(1, navigation.count)
+        assertEquals(true, navigation.strategy is NavigationStrategy.Add)
+//        assertEquals(NavigationStrategy.Add(Screen.Details), navigation.strategy)
+    }
+
     private class TestManagerResources : ManageResources {
         var string: String = ""
 
@@ -195,7 +224,6 @@ class NumbersViewModelTest : BaseTest() {
         }
 
     }
-
     private class TestDispatcherList(
         private val dispatcher: CoroutineDispatcher = TestCoroutineDispatcher()
     ) : DispatchersList {
@@ -204,5 +232,9 @@ class NumbersViewModelTest : BaseTest() {
         override fun ui(): CoroutineDispatcher = dispatcher
     }
 
-
+    private class TestUiMapper : NumberUi.Mapper<String> {
+        override fun map(id: String, fact: String): String = "$id $fact"
+    }
 }
+
+

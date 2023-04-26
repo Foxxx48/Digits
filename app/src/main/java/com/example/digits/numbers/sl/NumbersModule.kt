@@ -1,5 +1,6 @@
 package com.example.digits.numbers.sl
 
+import android.telecom.Call.Details
 import com.example.digits.main.sl.Core
 import com.example.digits.main.sl.Module
 import com.example.digits.numbers.data.BaseNumbersRepository
@@ -14,6 +15,7 @@ import com.example.digits.numbers.domain.HandleError
 import com.example.digits.numbers.domain.HandleRequest
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
+import com.example.digits.numbers.presentation.DetailsUi
 import com.example.digits.numbers.presentation.HandleNumbersRequest
 import com.example.digits.numbers.presentation.NumbersCommunications
 import com.example.digits.numbers.presentation.NumbersListCommunication
@@ -59,7 +61,9 @@ class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
                     HandleError.Base(core),
                     repository
                 )
-            )
+            ),
+            core.provideNavigation(),
+            DetailsUi()
         )
     }
 }
