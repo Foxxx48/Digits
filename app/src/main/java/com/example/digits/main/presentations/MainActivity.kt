@@ -15,11 +15,13 @@ class MainActivity : AppCompatActivity(), ProvideViewModel {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("fx39", "MainActivity onCreate")
         setContentView(R.layout.activity_main)
 
         val viewModel = provideViewModel(MainViewModel::class.java, this)
 
         viewModel.observe(this) { strategy ->
+            Log.d("fx39", "MainActivity Observed called")
             strategy.navigate(supportFragmentManager, R.id.container)
         }
 

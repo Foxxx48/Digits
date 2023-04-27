@@ -8,5 +8,5 @@ interface NavigationCommunication: Communication.Mutable<NavigationStrategy> {
     interface Mutate : Communication.Mutate<NavigationStrategy>
     interface Mutable: Observe, Mutate
 
-    class Base : Communication.Ui<NavigationStrategy>(), Mutable
+    class Base : Communication.Ui<NavigationStrategy>(SingleLiveEvent()), Mutable
 }

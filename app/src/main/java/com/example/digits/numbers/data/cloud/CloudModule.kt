@@ -7,14 +7,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 interface CloudModule {
-    fun <T> service(clasz: Class<T>): T
+    fun <T> service(clast: Class<T>): T
     class Mock : CloudModule {
-        override fun <T> service(clasz: Class<T>): T {
+        override fun <T> service(clast: Class<T>): T {
             return MockNumbersService() as T
         }
     }
     class Base : CloudModule {
-        override fun <T> service(clasz: Class<T>): T {
+        override fun <T> service(clast: Class<T>): T {
             val interceptor = HttpLoggingInterceptor().apply {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
             }
@@ -26,7 +26,7 @@ interface CloudModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
-            return retrofit.create(clasz)
+            return retrofit.create(clast)
         }
     }
     companion object {
