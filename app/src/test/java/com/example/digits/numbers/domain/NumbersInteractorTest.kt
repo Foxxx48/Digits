@@ -1,5 +1,6 @@
 package com.example.digits.numbers.domain
 
+import com.example.digits.details.data.NumberFactDetails
 import com.example.digits.numbers.presentation.ManageResources
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -17,8 +18,8 @@ class NumbersInteractorTest {
         repository = TestNumbersRepository()
         interactor = NumbersInteractor.Base(
             repository,
-            HandleRequest.Base(HandleError.Base(manageResources), repository)
-
+            HandleRequest.Base(HandleError.Base(manageResources), repository),
+            NumberFactDetails.Base()
         )
     }
 

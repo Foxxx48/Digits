@@ -3,8 +3,9 @@ package com.example.digits.numbers.presentation
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.example.digits.main.presentations.SingleLiveEvent
 
-interface Communication<T> {
+interface Communication {
 
     interface Observe<T> {
         fun observe(owner: LifecycleOwner, observer: Observer<T>)
@@ -24,7 +25,6 @@ interface Communication<T> {
     abstract class Ui<T>(
         liveData: MutableLiveData<T> = MutableLiveData()
     ) : Abstract<T>(liveData) {
-
         override fun map(source: T) {
             liveData.value = source
         }
@@ -33,8 +33,9 @@ interface Communication<T> {
     abstract class Post<T>(
         liveData: MutableLiveData<T> = MutableLiveData()
     ) : Abstract<T>(liveData) {
-
         override fun map(source: T) = liveData.postValue(source)
-
     }
+
+    abstract class SingleUi<T> : Ui<T>(SingleLiveEvent())
+    abstract class SinglePost<T> : Post<T>(SingleLiveEvent())
 }

@@ -1,6 +1,5 @@
 package com.example.digits.numbers.sl
 
-import android.telecom.Call.Details
 import com.example.digits.main.sl.Core
 import com.example.digits.main.sl.Module
 import com.example.digits.numbers.data.BaseNumbersRepository
@@ -60,7 +59,8 @@ class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
                 HandleRequest.Base(
                     HandleError.Base(core),
                     repository
-                )
+                ),
+                core.provideNumberDetails()
             ),
             core.provideNavigation(),
             DetailsUi()

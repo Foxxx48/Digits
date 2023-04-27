@@ -162,7 +162,7 @@ class NumbersViewModelTest : BaseTest() {
     fun `test navigation details`() {
         viewModel.showDetails(NumberUi("0", "fact"))
 
-//        assertEquals("0 fact", interactor.details)
+        assertEquals("0 fact", interactor.details)
         assertEquals(1, navigation.count)
         assertEquals(true, navigation.strategy is NavigationStrategy.Add)
 //        assertEquals(NavigationStrategy.Add(Screen.Details), navigation.strategy)
@@ -190,9 +190,15 @@ class NumbersViewModelTest : BaseTest() {
         val fetchAboutNumberCalledList = mutableListOf<NumbersResult>()
         val fetchAboutRandomNumberCalledList = mutableListOf<NumbersResult>()
 
+        var details: String = ""
+
         fun changeExpectedResult(newResult: NumbersResult) {
             result = newResult
 
+        }
+
+        override fun saveDetails(details: String) {
+            this.details = details
         }
 
         override suspend fun init(): NumbersResult {

@@ -3,46 +3,25 @@ package com.example.digits.numbers.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digits.R
-import com.example.digits.main.sl.ProvideViewModel
+import com.example.digits.main.presentations.BaseFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 
-class NumbersFragment : Fragment() {
+class NumbersFragment() : BaseFragment<NumbersViewModel.Base>() {
 
-    lateinit var viewModel: NumbersViewModel
-    lateinit var inputText: TextInputEditText
+    override val viewModelClass = NumbersViewModel.Base::class.java
+    override val layoutId: Int = R.layout.fragment_numbers
+    private lateinit var inputText: TextInputEditText
 
     private val watcher = object : SimpleTextWatcher() {
         override fun afterTextChanged(s: Editable?) = viewModel.clearError()
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("fx39", "NumbersFragment onCreate")
-        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(
-            NumbersViewModel.Base::class.java,
-            this
-        )
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_numbers, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -83,17 +62,14 @@ class NumbersFragment : Fragment() {
         viewModel.init(savedInstanceState == null)
 
     }
-
     override fun onPause() {
         super.onPause()
         inputText.removeTextChangedListener(watcher)
     }
-
     override fun onResume() {
         inputText.addTextChangedListener(watcher)
         super.onResume()
     }
-
     abstract class SimpleTextWatcher : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
