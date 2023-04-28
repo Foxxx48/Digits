@@ -8,10 +8,8 @@ import java.util.concurrent.TimeUnit
 
 interface CloudModule {
     fun <T> service(clast: Class<T>): T
-    class Mock : CloudModule {
-        override fun <T> service(clast: Class<T>): T {
-            return MockNumbersService() as T
-        }
+    class Mock(private val randomApiHeader: RandomApiHeader.MockResponse) : CloudModule {
+        override fun <T> service(clast: Class<T>): T = MockNumbersService(randomApiHeader) as T
     }
     class Base : CloudModule {
         override fun <T> service(clast: Class<T>): T {

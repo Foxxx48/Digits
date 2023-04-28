@@ -6,10 +6,11 @@ import com.example.digits.main.presentations.NavigationCommunication
 import com.example.digits.numbers.data.cache.CacheModule
 import com.example.digits.numbers.data.cache.NumbersDatabase
 import com.example.digits.numbers.data.cloud.CloudModule
+import com.example.digits.numbers.data.cloud.RandomApiHeader
 import com.example.digits.numbers.presentation.DispatchersList
 import com.example.digits.numbers.presentation.ManageResources
 
-interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, ProvideNumberDetails {
+interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, ProvideNumberDetails, ProvideRandomApiHeader {
     fun provideDispatchers(): DispatchersList
 
     override fun <T> service(clast: Class<T>): T
@@ -46,6 +47,7 @@ interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, P
         override fun provideNavigation() = navigationCommunication
 
         override fun provideNumberDetails(): NumberFactDetails.Mutable = numberDetails
+        override fun provideRandomApiHeader(): RandomApiHeader.Combo = provideInstances.provideRandomApiHeader()
 
     }
 }
