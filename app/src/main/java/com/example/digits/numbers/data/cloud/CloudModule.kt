@@ -7,34 +7,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 interface CloudModule {
-
-    fun <T> service(clasz: Class<T>): T
-
-    abstract class Abstract : CloudModule {
-
-        protected abstract val level: HttpLoggingInterceptor.Level
-        protected open val baseUrl: String = "http://numbersapi.com/"
-
-        override fun <T> service(clasz: Class<T>): T {
+    fun <T> service(clast: Class<T>): T
+    class Mock(private val randomApiHeader: RandomApiHeader.MockResponse) : CloudModule {
+        override fun <T> service(clast: Class<T>): T = MockNumbersService(randomApiHeader) as T
+    }
+    class Base : CloudModule {
+        override fun <T> service(clast: Class<T>): T {
             val interceptor = HttpLoggingInterceptor().apply {
-                setLevel(level)
+                setLevel(HttpLoggingInterceptor.Level.BODY)
             }
             val client = OkHttpClient.Builder().addInterceptor(interceptor)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
-            return retrofit.create(clasz)
+            return retrofit.create(clast)
         }
     }
-
-    class Debug : Abstract() {
-        override val level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY
-    }
-    class Release : Abstract() {
-        override val level: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.NONE
+    companion object {
+        private val BASE_URL = "http://numbersapi.com/"
     }
 }

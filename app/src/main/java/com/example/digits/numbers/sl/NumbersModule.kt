@@ -14,6 +14,7 @@ import com.example.digits.numbers.domain.HandleError
 import com.example.digits.numbers.domain.HandleRequest
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
+import com.example.digits.numbers.presentation.DetailsUi
 import com.example.digits.numbers.presentation.HandleNumbersRequest
 import com.example.digits.numbers.presentation.NumbersCommunications
 import com.example.digits.numbers.presentation.NumbersListCommunication
@@ -35,7 +36,8 @@ class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
         )
         val repository = BaseNumbersRepository(
             NumbersCloudDataSource.Base(
-                core.service(NumbersService::class.java)
+                core.service(NumbersService::class.java),
+                core.provideRandomApiHeader()
             ),
             cacheDataSource,
             HandleDataRequest.Base(
@@ -58,8 +60,11 @@ class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
                 HandleRequest.Base(
                     HandleError.Base(core),
                     repository
-                )
-            )
+                ),
+                core.provideNumberDetails()
+            ),
+            core.provideNavigation(),
+            DetailsUi()
         )
     }
 }
