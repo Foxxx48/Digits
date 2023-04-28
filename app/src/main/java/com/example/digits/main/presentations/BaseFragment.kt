@@ -18,7 +18,6 @@ abstract class BaseFragment <T : ViewModel> : Fragment() {
         super.onCreate(savedInstanceState)
         viewModel = (requireActivity() as ProvideViewModel).provideViewModel(viewModelClass, this)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

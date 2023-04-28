@@ -11,7 +11,6 @@ class NumberDetailsFragment() : BaseFragment<NumberDetailsViewModel>(){
 
     override val viewModelClass = NumberDetailsViewModel::class.java
     override val layoutId= R.layout.fragment_details
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

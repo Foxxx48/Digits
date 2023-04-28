@@ -5,7 +5,6 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class MainViewModelTest : BaseTest() {
-
     @Test
     fun `test navigation at start`() {
         val navigation = TestNavigationCommunication()
@@ -13,8 +12,7 @@ class MainViewModelTest : BaseTest() {
 
         mainViewModel.init(true)
         assertEquals(1, navigation.count)
-        assertEquals(true, navigation.strategy is NavigationStrategy.Replace)
-
+        assertEquals(NavigationStrategy.Replace(Screen.Numbers), navigation.strategy)
 
         mainViewModel.init(false)
         assertEquals(1, navigation.count)

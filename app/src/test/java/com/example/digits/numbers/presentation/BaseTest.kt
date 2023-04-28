@@ -14,6 +14,7 @@ abstract class BaseTest {
         override fun observe(owner: LifecycleOwner, observer: Observer<NavigationStrategy>) = Unit
 
         override fun map(source: NavigationStrategy) {
+
             strategy = source
             count++
         }

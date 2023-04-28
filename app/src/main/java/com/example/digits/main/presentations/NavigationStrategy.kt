@@ -1,41 +1,31 @@
 package com.example.digits.main.presentations
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 
 interface NavigationStrategy {
-
     fun navigate(supportFragmentManager: FragmentManager, containerId: Int)
-
-    abstract class Abstract(protected val fragment: Fragment) : NavigationStrategy {
-
+    abstract class Abstract(protected open val screen: Screen) : NavigationStrategy {
         override fun navigate(
             supportFragmentManager: FragmentManager,
             containerId: Int
         ) {
-           supportFragmentManager.beginTransaction()
-               .executeTransaction(containerId)
-               .commit()
+            supportFragmentManager.beginTransaction()
+                .executeTransaction(containerId)
+                .commit()
         }
-
         protected abstract fun FragmentTransaction.executeTransaction(
             containerId: Int
-        ) : FragmentTransaction
+        ): FragmentTransaction
     }
-
-    class Replace(fragment: Fragment) : Abstract(fragment) {
-
+    data class Replace(override val screen: Screen) : Abstract(screen) {
         override fun FragmentTransaction.executeTransaction(containerId: Int) =
-            replace(containerId, fragment)
-
+            replace(containerId, screen.fragment().newInstance())
     }
-    class Add(fragment: Fragment): Abstract(fragment) {
-
+    data class Add(override val screen: Screen) : Abstract(screen) {
         override fun FragmentTransaction.executeTransaction(containerId: Int) =
-         add(containerId, fragment)
-             .addToBackStack(fragment.javaClass.simpleName)
-
-
+            screen.fragment().let {
+                add(containerId, it.newInstance()).addToBackStack(it.simpleName)
+            }
     }
 }
