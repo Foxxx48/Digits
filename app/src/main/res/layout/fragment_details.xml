@@ -4,7 +4,7 @@
     android:id="@+id/tv_Details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"fix
+    android:clickable="true"
     android:focusable="true"
     android:gravity="center_horizontal"
     android:scrollbars="vertical"
