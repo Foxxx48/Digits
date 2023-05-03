@@ -9,8 +9,9 @@ import com.example.digits.numbers.data.cloud.CloudModule
 import com.example.digits.numbers.data.cloud.RandomApiHeader
 import com.example.digits.numbers.presentation.DispatchersList
 import com.example.digits.numbers.presentation.ManageResources
+import com.example.digits.random.WorkManagerWrapper
 
-interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, ProvideNumberDetails, ProvideRandomApiHeader {
+interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, ProvideNumberDetails, ProvideRandomApiHeader, ProvideWorkManagerWrapper {
     fun provideDispatchers(): DispatchersList
 
     override fun <T> service(clast: Class<T>): T
@@ -18,6 +19,8 @@ interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, P
         context: Context,
         private val provideInstances: ProvideInstances
     ) : Core {
+
+        private val workManagerWrapper: WorkManagerWrapper = WorkManagerWrapper.Base(context)
 
         private val manageResources: ManageResources = ManageResources.Base(context)
 
@@ -48,9 +51,14 @@ interface Core : CloudModule, CacheModule, ManageResources, ProvideNavigation, P
 
         override fun provideNumberDetails(): NumberFactDetails.Mutable = numberDetails
         override fun provideRandomApiHeader(): RandomApiHeader.Combo = provideInstances.provideRandomApiHeader()
+        override fun provideWorkManagerWrapper() = workManagerWrapper
 
     }
 }
+interface ProvideWorkManagerWrapper {
+    fun provideWorkManagerWrapper(): WorkManagerWrapper
+}
+
 interface ProvideNavigation {
     fun provideNavigation(): NavigationCommunication.Mutable
 }

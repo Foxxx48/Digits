@@ -14,6 +14,7 @@ import com.example.digits.numbers.domain.HandleError
 import com.example.digits.numbers.domain.HandleRequest
 import com.example.digits.numbers.domain.NumberUiMapper
 import com.example.digits.numbers.domain.NumbersInteractor
+import com.example.digits.numbers.domain.NumbersRepository
 import com.example.digits.numbers.presentation.DetailsUi
 import com.example.digits.numbers.presentation.HandleNumbersRequest
 import com.example.digits.numbers.presentation.NumbersCommunications
@@ -23,30 +24,18 @@ import com.example.digits.numbers.presentation.NumbersStateCommunications
 import com.example.digits.numbers.presentation.NumbersViewModel
 import com.example.digits.numbers.presentation.ProgressCommunication
 
-class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
+class NumbersModule(
+    private val core: Core,
+    private val provideRepository: ProvideNumbersRepository
+) : Module<NumbersViewModel.Base> {
     override fun viewModel(): NumbersViewModel.Base {
+        val repository = provideRepository.provideNumbersRepository()
         val communications = NumbersCommunications.Base(
             ProgressCommunication.Base(),
             NumbersStateCommunications.Base(),
             NumbersListCommunication.Base()
         )
-        val cacheDataSource = NumbersCacheDataSource.Base(
-            core.provideDatabase().numbersDao(),
-            DataModelToCacheModel()
-        )
-        val repository = BaseNumbersRepository(
-            NumbersCloudDataSource.Base(
-                core.service(NumbersService::class.java),
-                core.provideRandomApiHeader()
-            ),
-            cacheDataSource,
-            HandleDataRequest.Base(
-                cacheDataSource,
-                NumberDataToDomain(),
-                HandleDomainError()
-            ),
-            NumberDataToDomain()
-        )
+
         return NumbersViewModel.Base(
             HandleNumbersRequest.Base(
                 core.provideDispatchers(),
@@ -68,3 +57,32 @@ class NumbersModule(private val core: Core) : Module<NumbersViewModel.Base> {
         )
     }
 }
+
+interface ProvideNumbersRepository {
+
+    fun provideNumbersRepository(): NumbersRepository
+
+    class Base(private val core: Core) : ProvideNumbersRepository {
+
+        override fun provideNumbersRepository(): NumbersRepository {
+            val cacheDataSource = NumbersCacheDataSource.Base(
+                core.provideDatabase().numbersDao(),
+                DataModelToCacheModel()
+            )
+            return BaseNumbersRepository(
+                NumbersCloudDataSource.Base(
+                    core.service(NumbersService::class.java),
+                    core.provideRandomApiHeader()
+                ),
+                cacheDataSource,
+                HandleDataRequest.Base(
+                    cacheDataSource,
+                    NumberDataToDomain(),
+                    HandleDomainError()
+                ),
+                NumberDataToDomain()
+            )
+        }
+    }
+}
+

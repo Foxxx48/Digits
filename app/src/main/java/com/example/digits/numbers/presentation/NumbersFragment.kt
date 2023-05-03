@@ -5,19 +5,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.digits.R
 import com.example.digits.main.presentations.BaseFragment
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 
 
 class NumbersFragment() : BaseFragment<NumbersViewModel.Base>() {
 
     override val viewModelClass = NumbersViewModel.Base::class.java
     override val layoutId: Int = R.layout.fragment_numbers
-    private lateinit var inputText: TextInputEditText
+    private lateinit var inputText: BaseCustomTextInputEditText
 
     private val watcher = object : SimpleTextWatcher() {
         override fun afterTextChanged(s: Editable?) = viewModel.clearError()
@@ -25,9 +22,9 @@ class NumbersFragment() : BaseFragment<NumbersViewModel.Base>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
-        inputText = view.findViewById<TextInputEditText>(R.id.et_textfield)
-        val textInputLayout = view.findViewById<TextInputLayout>(R.id.et_layout)
+        val progressBar = view.findViewById<View>(R.id.progressBar)
+        inputText = view.findViewById(R.id.et_textfield)
+        val textInputLayout = view.findViewById<BaseCustomTextInputLayout>(R.id.et_layout)
         val factButton = view.findViewById<Button>(R.id.btn_get_fact)
         val randomButton = view.findViewById<Button>(R.id.btn_random_fact)
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_history)
