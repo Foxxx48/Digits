@@ -1,11 +1,13 @@
 # Digits 
-Application with basic UI. 
+Application with basic UI
 
-Get information about the number or random number  use api http://numbersapi.com.
+Get information about the number or random number  use api http://numbersapi.com
 
-UI and Unit tests included.
+UI and Unit tests included
 
 OOP 
+
+TDD approach was used
 
 
 
@@ -29,4 +31,5 @@ OOP
 - Coroutines
 - Espresso
 - Custom Views
+- TDD
 
