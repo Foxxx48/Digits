@@ -1,7 +1,7 @@
 # Digits 
 Application with basic UI
 
-Get information about the number or random number  use api http://numbersapi.com
+Get information about the number or random number  uses the API http://numbersapi.com
 
 UI and Unit tests included
 
