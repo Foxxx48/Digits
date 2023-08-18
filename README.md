@@ -22,6 +22,7 @@ TDD approach was used
 <br />
 
 ### Technology stack:
+- Android SDK
 - Kotlin
 - MVVM
 - Retrofit
